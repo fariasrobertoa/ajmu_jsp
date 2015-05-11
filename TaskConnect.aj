@@ -10,9 +10,6 @@
 */
 package ajmu;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 abstract aspect TaskConnect{
 
 	static boolean connectOcupado = false;
@@ -23,7 +20,7 @@ abstract aspect TaskConnect{
 	 * POINTCUT inicializacion()
 	 * Define el conjunto de puntos de corte que marcan el inicio de la tarea cuya usabilidad se desea estudiar.
 	 */
-	abstract pointcut inicializacion(HttpServletRequest q,HttpServletResponse p);
+	abstract pointcut inicializacion();
 	/**
 	 * ADVICE before()
 	 * Si la tarea aún no ha iniciado, cambia el estado del atributo iniciada a true. 
@@ -31,16 +28,12 @@ abstract aspect TaskConnect{
 	
 	abstract String setTareaDescripcion();
 	
-	abstract boolean validateAction(HttpServletRequest q);
-	
-	before(HttpServletRequest q,HttpServletResponse p): inicializacion(q,p){
+	before(): inicializacion(){
 		if(!connectOcupado){
 			if (!iniciada) {
-				if(validateAction(q)){
-					miTarea = new Task(setTareaDescripcion());
-					iniciada = true;
-					connectOcupado = true;
-				}
+				miTarea = new Task(setTareaDescripcion());
+				iniciada = true;
+				connectOcupado = true;
 			}
 		}
 	}
