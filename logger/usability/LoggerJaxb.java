@@ -18,15 +18,14 @@ public class LoggerJaxb {
 	private TaskType tareaActual;
 	private String fileLog = "logUsability.xml";
 	private boolean existeFuente = false;
+	private int lastSession = 1;
 	
-	public LoggerJaxb(String nameApp, String version){
+	public LoggerJaxb(){
 		
 		File archXML = new File(fileLog);
 		
 		if(!archXML.exists()){
 			regusa = new UsabilityRecordType();
-			regusa.setAppName(nameApp);
-			regusa.setVersion(version);
 			regusa.generateXML(fileLog);
 		}else{
 			try{
@@ -38,6 +37,8 @@ public class LoggerJaxb {
 	    		regusa = (UsabilityRecordType) u.unmarshal(new FileInputStream(fileLog)); 
 	    		
 	    		existeFuente = true;
+	    		
+	    		lastSession = regusa.getSession().size()+1;
 	    		    		
 	    	} catch (JAXBException e) {
 	            e.printStackTrace();
@@ -65,7 +66,7 @@ public class LoggerJaxb {
 			regusa.getTasksAnalized().add(task);
 		}
 	}
-	public void addSession(Integer edad, String sex, String id){
+	public void addSession(Integer edad, String sex){
 		SessionType sesion = new SessionType();
         sesion.setAge(edad);
         long time = System.currentTimeMillis();
@@ -76,7 +77,7 @@ public class LoggerJaxb {
         
         sesion.setDate(dateSesion);
         sesion.setSex(sex);
-        sesion.setId(id);
+        sesion.setId(String.valueOf(lastSession));
         regusa.getSession().add(sesion);
         sesionActual = sesion;
         regusa.generateXML(fileLog);
@@ -130,8 +131,7 @@ public class LoggerJaxb {
 		}
 	}
 	
-	//public void addLogFinal(String state, Integer accDoc, Integer cantDialog, Integer cantExcep, Integer msjE, Integer msjI, Integer msjQ, Integer msjW, Integer msjO,Long execTime, String satisfaction){
-	public void addLogFinal(String state, Integer accDoc, Integer cantDialog, Integer cantExcep, Integer msjE, Integer msjI, Integer msjQ, Integer msjW, Integer msjO,Long execTime, int sat1, int sat2, int sat3, double compositeSat){
+	public void addLogFinal(String state, Integer accDoc, Integer cantDialog, Integer cantExcep, Integer msjE, Integer msjI, Integer msjQ, Integer msjW, Integer msjO,Long execTime, int sat1, int sat2, int sat3){
 		LogFinalType logTaskFinal = new LogFinalType();
 		logTaskFinal.setTotalAccDoc(accDoc);
 		logTaskFinal.setTotalDialog(cantDialog);
@@ -142,11 +142,9 @@ public class LoggerJaxb {
 		logTaskFinal.setTotalMessWarn(msjW);
 		logTaskFinal.setTotalMessWithoutIcon(msjO);
 		logTaskFinal.setTotalExecTime(execTime);
-		//logTaskFinal.setSatisDegree(satisfaction);
 		logTaskFinal.setSat1(sat1);
 		logTaskFinal.setSat2(sat2);
 		logTaskFinal.setSat3(sat3);
-		logTaskFinal.setCompositeSat(compositeSat);
 		tareaActual.getLog().get(0).setLogFinal(logTaskFinal);
 		tareaActual.setState(state);
 		regusa.generateXML(fileLog);

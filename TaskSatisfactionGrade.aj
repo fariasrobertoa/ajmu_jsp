@@ -23,8 +23,7 @@ public aspect TaskSatisfactionGrade {
 	
 	static String auxSat1, auxSat2, auxSat3;
 	static int sat1, sat2, sat3;
-	static double  avgSat, variance, stdDeviation, compositeSat;
-    static int numButtons = 5;
+	static int numButtons = 5;
     
     static ButtonGroup groupDifficult = new ButtonGroup();
     static ButtonGroup groupSatisfied = new ButtonGroup();
@@ -48,7 +47,7 @@ public aspect TaskSatisfactionGrade {
     static String timeTaskSat4Command = "4";
     static String timeTaskSat5Command = "5";   
 	
-	pointcut satisfaction(Task t):execution(void Task.finaliza(..))&&this(t);
+	pointcut satisfaction(Task t):execution(void Task.finalize(..))&&this(t);
 	
 	before(Task t): satisfaction(t){
 		//ddifficult
@@ -166,15 +165,11 @@ public aspect TaskSatisfactionGrade {
 	      sat1	=	Integer.parseInt(auxSat1);
 	      sat2	= 	Integer.parseInt(auxSat2);
 	      sat3	= 	Integer.parseInt(auxSat3);
-	      avgSat = (sat1 + sat2 + sat3)/3;
-	      variance = (Math.pow(sat1-avgSat, 2) + Math.pow(sat2-avgSat, 2) + Math.pow(sat3-avgSat, 2) )/3;
-	      stdDeviation	= Math.sqrt(variance);
-	      compositeSat	= (4-avgSat)/stdDeviation;
-	      
+	      	      
 	      t.setSat1(sat1);
 	      t.setSat2(sat2);
 	      t.setSat3(sat3);
-	      t.setCompositeSat(compositeSat);
+	      
 		
 	}
 	

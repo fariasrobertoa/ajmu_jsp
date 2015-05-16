@@ -9,62 +9,62 @@ import org.aspectj.lang.Signature;
 
 public aspect TaskError extends TaskEvent{
 	/**
-	 * POINCUT excepcionesAlInicio()
+	 * POINCUT initExceptions()
 	 * Captura las excepciones gestionadas por catch, en el flujo de control iniciado por el pointcut inicializacion()
 	 */
-	pointcut excepcionesAlInicio(Throwable e): flujoInicializacion()&&!flujoAspecto()&&handler(Throwable+)&&args(e);
+	pointcut initExceptions(Throwable e): initFlow()&&!aspectFlow()&&handler(Throwable+)&&args(e);
 	/**
 	 * ADVICE before()
 	 * Cuando una excepción es capturada, se registra en el log invocando al aspecto TaskLogger, y se contabiliza su ocurrencia en el objeto miTarea. 
 	 * @param e es un objeto de la clase Throwable de la cual heredan los diferentes tipos de excepciones que pueden ocurrir en una aplicación.
 	 */
-	before(Throwable e): excepcionesAlInicio(e){
+	before(Throwable e): initExceptions(e){
 		
 		Signature sig = thisJoinPointStaticPart.getSignature();
 		String kind = thisJoinPointStaticPart.getKind();
         String line =""+ thisJoinPointStaticPart.getSourceLocation().getLine();
         String sourceName = thisJoinPointStaticPart.getSourceLocation().getWithinType().getCanonicalName();
         
-        String reg = "Excepción al inicio "+ ++nroEvento + ": Ocurrió una excepción en "+ sourceName+ "("+ kind +") línea " + line + " en el método " + sig + "(" + thisJoinPoint.toLongString() + ") Mensaje del error: " + e.getMessage();
+        String reg = "Excepción al inicio "+ ++totalEvents + ": Ocurrió una excepción en "+ sourceName+ "("+ kind +") línea " + line + " en el método " + sig + "(" + thisJoinPoint.toLongString() + ") Mensaje del error: " + e.getMessage();
 		
-		miTarea.setCantExcepciones();
+		taskRef.setTotalExceptions();
 		
-		TaskLogger.aspectOf().log().addException(miTarea.getCantExcepciones(), reg);
+		TaskLogger.aspectOf().log().addException(taskRef.getTotalExceptions(), reg);
 	}
 	/**
-	 * POINTCUT excepcionesEnEjecucion()
+	 * POINTCUT executionExceptions()
 	 * Captura las excepciones gestionadas por catch, en el flujo de control LUEGO de la accion definida en pointcut inicializacion()
 	 */
-	pointcut excepcionesEnEjecucion(Throwable e):!flujoInicializacion()&&!flujoAspecto()&&handler(Throwable+)&&args(e)&&tareaEnEjecucion();
+	pointcut executionExceptions(Throwable e):!initFlow()&&!aspectFlow()&&handler(Throwable+)&&args(e)&&isATask();
 	/**
 	 * ADVICE before()
 	 * Cuando una excepción es capturada, se registra en el log invocando al aspecto TaskLogger, y se contabiliza su ocurrencia en el objeto miTarea.
 	 * @param e es un objeto de la clase Throwable de la cual heredan los diferentes tipos de excepciones que pueden ocurrir en una aplicación.
 	 */
-	before(Throwable e):excepcionesEnEjecucion(e){
+	before(Throwable e):executionExceptions(e){
 		Signature sig = thisJoinPointStaticPart.getSignature();
 		String kind = thisJoinPointStaticPart.getKind();
 		String line =""+ thisJoinPointStaticPart.getSourceLocation().getLine();
         String sourceName = thisJoinPointStaticPart.getSourceLocation().getWithinType().getCanonicalName();
         
-        String reg = "Excepción en Ejecución "+ ++nroEvento + ": Ocurrió una excepción en "+ sourceName+ "("+ kind +") línea " + line + " en el método " + sig + "(" + thisJoinPoint.toLongString() + ") Mensaje del error: " + e.getMessage();
+        String reg = "Excepción en Ejecución "+ ++totalEvents + ": Ocurrió una excepción en "+ sourceName+ "("+ kind +") línea " + line + " en el método " + sig + "(" + thisJoinPoint.toLongString() + ") Mensaje del error: " + e.getMessage();
     
-        miTarea.setCantExcepciones();
+        taskRef.setTotalExceptions();
 		
-        TaskLogger.aspectOf().log().addException(miTarea.getCantExcepciones(), reg);
+        TaskLogger.aspectOf().log().addException(taskRef.getTotalExceptions(), reg);
 	}
 	/**
-	 * POINTCUT capturaOptionPane()
+	 * POINTCUT completeMessage()
 	 * Captura ventanas de tipo JOptionPane gestionadas en el flujo de control LUEGO de la accion definida en pointcut inicializacion()
 	 */
-	pointcut capturaOptionPane(): !flujoInicializacion()&&!flujoAspecto()&&call(* javax.swing.JOptionPane+.show*Dialog(..)) && !within(ajmu.TaskSatisfactionGrade.*)&& tareaEnEjecucion();
+	pointcut completeMessage(): !initFlow()&&!aspectFlow()&&call(* javax.swing.JOptionPane+.show*Dialog(..)) && !within(ajmu.TaskSatisfactionGrade.*)&& isATask();
 	/**
 	 * ADVICE before()
 	 * cuando una ventana de tipo JOptionPane es capturada, se analiza si se trata de un mensaje informativo, una advertencia, 
 	 * una pregunta, o un error. Luego, se registra en el log mediante el aspecto TaskLogger y se contabiliza seteando el 
 	 * atributo correspondiente en el objeto miTarea.
 	 */
-	before(): capturaOptionPane(){ 
+	before(): completeMessage(){ 
 		String tipoJOptionPane	= strTipoJOption(thisJoinPoint.getSignature().getName());
 		Object [] parametros	= thisJoinPoint.getArgs();			
 		String tituloMensaje	= parametros[2].toString();
@@ -106,11 +106,11 @@ public aspect TaskError extends TaskEvent{
 		}
 		//incrementar los contadores en la clase Tarea
 		switch (tipoIcono){
-			case -1: miTarea.setCantMensajesSinIcono();break;
-			case 0: miTarea.setCantMensajesIconoError();break;
-			case 1: miTarea.setCantMensajesIconoInformativo();break;
-			case 2: miTarea.setCantMensajesIconoAdvertencia();break;
-			case 3: miTarea.setCantMensajesIconoPregunta();break;
+			case -1: taskRef.setTotalMessWithoutIcon();break;
+			case 0: taskRef.setTotalMessError();break;
+			case 1: taskRef.setTotalMessInfo();break;
+			case 2: taskRef.setTotalMessWarn();break;
+			case 3: taskRef.setTotalMessQuestion();break;
 		}
 			
 		Signature sig = thisJoinPointStaticPart.getSignature();
@@ -118,20 +118,20 @@ public aspect TaskError extends TaskEvent{
 		String line =""+ thisJoinPointStaticPart.getSourceLocation().getLine();
 	    String sourceName = thisJoinPointStaticPart.getSourceLocation().getWithinType().getCanonicalName();
 	         
-	    String reg = "Dialogo: "+  + ++nroDialogo + "-> TITULO: '" +tituloMensaje + "' TIPO DE MENSAJE: " + tipoMensajeIconificado + " : Ocurrio un llamado en "+ sourceName+ " ("+ kind +") linea " + line + " al metodo " + sig + "(" + thisJoinPoint.toLongString() + ")";
+	    String reg = "Dialogo: "+  + ++totalDialogs + "-> TITULO: '" +tituloMensaje + "' TIPO DE MENSAJE: " + tipoMensajeIconificado + " : Ocurrio un llamado en "+ sourceName+ " ("+ kind +") linea " + line + " al metodo " + sig + "(" + thisJoinPoint.toLongString() + ")";
 	        
-	    miTarea.setCantDialogos();
-		TaskLogger.aspectOf().log().addDialog(miTarea.getCantDialogos(), reg);
+	    taskRef.setTotalDialogs();
+		TaskLogger.aspectOf().log().addDialog(taskRef.getTotalDialogs(), reg);
 	}
 	/**
 	 * EXTRAER string del tipo del metodo show*Dialog de JOptionPane
-	 * @param nombreMetodoShow nombre del metodo show*Dialog de clase JOptionPane
+	 * @param nameMethod nombre del metodo show*Dialog de clase JOptionPane
 	 * @return substring con nombre del tipo de JOptionPane : Message,Option,Input,Confirm, InternalMessage, InternalOption, InternalInput, InternalConfirm 
 	 * */	
-	private String strTipoJOption(String nombreMetodoShow) {
+	private String strTipoJOption(String nameMethod) {
 		
 		Pattern pattern = Pattern.compile("(?<=show).*.(?=Dialog)");
-		Matcher matcher = pattern.matcher(nombreMetodoShow);
+		Matcher matcher = pattern.matcher(nameMethod);
 		String auxTipo = null;		
 		        
 		while (matcher.find()) {			
@@ -141,14 +141,14 @@ public aspect TaskError extends TaskEvent{
 	}
 	/**
 	 * EXTRAER nombre del icono del mensaje del JOPTIONPANE
-	 * @param tipoMensaje parametro del método show*Dialog que especifica el tipo de icono mostrado
+	 * @param typeMessage parametro del método show*Dialog que especifica el tipo de icono mostrado
 	 * @return nombre del icono
 	 * */
-	private String tipoIconoMensajeJOption(Object tipoMensaje) {
+	private String tipoIconoMensajeJOption(Object typeMessage) {
 		
 		String auxTipo = null;
 		
-		switch (Integer.parseInt(tipoMensaje.toString())){
+		switch (Integer.parseInt(typeMessage.toString())){
 		case JOptionPane.ERROR_MESSAGE : auxTipo= "ERROR";break;
 		case JOptionPane.INFORMATION_MESSAGE: auxTipo= "INFORMATIVO";break;
 		case JOptionPane.PLAIN_MESSAGE: auxTipo= "SIN ICONO"; break;

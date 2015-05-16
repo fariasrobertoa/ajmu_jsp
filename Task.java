@@ -14,20 +14,19 @@ package ajmu;
 public class Task {	
 	
 	private String id;
-	private boolean completa;
-	private long inicializacion,finalizacion;
-	private int cantExcepciones;
-	private String descripcion;
-	private int cantDialogos;
-	private int cantAccesosDocumentacion;
-	private int cantMensajesSinIcono;
-	private int cantMensajesIconoError;
-	private int cantMensajesIconoInformativo;
-	private int cantMensajesIconoAdvertencia;
-	private int cantMensajesIconoPregunta;
+	private boolean complete;
+	private long init,end;
+	private int totalExceptions;
+	//private String descripcion; totalMessQuestion
+	private int totalDialogs;
+	private int totalAccessDocumentation;
+	private int totalMessWithoutIcon;
+	private int totalMessError;
+	private int totalMessInfo;
+	private int totalMessWarn;
+	private int totalMessQuestion;
 	private int sat1, sat2, sat3;
-	private double compositeSat;
-	private String estado;
+	private String state;
 	private int ageUser;
 	private String sexUser;
 	
@@ -49,15 +48,16 @@ public class Task {
 	
     
 
-	public Task(String desc) {		
-		id	= desc.replaceAll(" ", "_") + "_"+ System.currentTimeMillis();
-		completa = false;
-		inicializacion = System.currentTimeMillis();
-		finalizacion = 0;
-		cantExcepciones = 0;
-		descripcion = desc;
-		cantAccesosDocumentacion = 0;
-		estado = "Iniciada";
+	public Task(String idTask) {		
+		//id	= desc.replaceAll(" ", "_") + "_"+ System.currentTimeMillis();
+		id = idTask;
+		complete = false;
+		init = System.currentTimeMillis();
+		end = 0;
+		totalExceptions = 0;
+		//descripcion = desc;
+		totalAccessDocumentation = 0;
+		state = "initiated";
 	}
 	
 	public void setSat1(int sat) {
@@ -78,110 +78,104 @@ public class Task {
 	public int getSat3() {
 		return sat3;
 	}
-	public void setCompositeSat(double compositeSat) {
-		this.compositeSat = compositeSat;
-	}
-	public double getCompositeSat() {
-		return compositeSat;
-	}
-	
-	public void setDescripcion(String descripcion) {
+		
+	/*public void setDescripcion(String descripcion) {
 		this.descripcion = descripcion;
 	}
 	public String getDescripcion() {
 		return descripcion;
-	}	
+	}*/	
 	public String getId() {
 		return id;
 	}
-	public boolean isCompleta() {
-		return completa;
+	public boolean isComplete() {
+		return complete;
 	}
-	public Long getInicializacion() {
-		return inicializacion;
+	public Long getInit() {
+		return init;
 	}
-	public Long getFinalizacion() {
-		return finalizacion;
+	public Long getEnd() {
+		return end;
 	}
-	public void finaliza(){	
-			finalizacion = System.currentTimeMillis();
-			completa = true;	
-			estado = "Finalizada";	
+	public void finalize(){	
+			end = System.currentTimeMillis();
+			complete = true;	
+			state = "Finished";	
 	}
-	public void noFinaliza(){	
-		completa = false;	
-		estado = "No Finalizada";	
+	public void noFinalize(){	
+		complete = false;	
+		state = "No Finished";	
 	}
-	public void setCantExcepciones() {
-		this.cantExcepciones++;
+	public void setTotalExceptions() {
+		this.totalExceptions++;
 	}
-	public int getCantExcepciones() {
-		return cantExcepciones;
+	public int getTotalExceptions() {
+		return totalExceptions;
 	}
-	public void setCantDialogos() {
-		this.cantDialogos++;
+	public void setTotalDialogs() {
+		this.totalDialogs++;
 	}
-	public int getCantDialogos() {
-		return cantDialogos;
+	public int getTotalDialogs() {
+		return totalDialogs;
 	}
-	public void setCantAccesosDocumentacion(){
-		this.cantAccesosDocumentacion++;
+	public void setTotalAccessDocumentation(){
+		this.totalAccessDocumentation++;
 	}
-	public int getCantAccesosDocumentacion(){
-		return this.cantAccesosDocumentacion;
+	public int getTotalAccessDocumentation(){
+		return this.totalAccessDocumentation;
 	}
-	public void setCantMensajesSinIcono() {
-		this.cantMensajesSinIcono++;
+	public void setTotalMessWithoutIcon() {
+		this.totalMessWithoutIcon++;
 	}
-	public int getCantMensajesSinIcono() {
-		return this.cantMensajesSinIcono;
+	public int getTotalMessWithoutIcon() {
+		return this.totalMessWithoutIcon;
 	}
-	public void setCantMensajesIconoError() {
-		this.cantMensajesIconoError++;
+	public void setTotalMessError() {
+		this.totalMessError++;
 	}
-	public int getCantMensajesIconoError() {
-		return this.cantMensajesIconoError;
+	public int getTotalMessError() {
+		return this.totalMessError;
 	}
-	public void setCantMensajesIconoInformativo() {
-		this.cantMensajesIconoInformativo++;
+	public void setTotalMessInfo() {
+		this.totalMessInfo++;
 	}
-	public int getCantMensajesIconoInformativo() {
-		return this.cantMensajesIconoInformativo;
+	public int getTotalMessInfo() {
+		return this.totalMessInfo;
 	}
-	public void setCantMensajesIconoAdvertencia() {
-		this.cantMensajesIconoAdvertencia++;
+	public void setTotalMessWarn() {
+		this.totalMessWarn++;
 	}
-	public int getCantMensajesIconoAdvertencia() {
-		return this.cantMensajesIconoAdvertencia;
+	public int getTotalMessWarn() {
+		return this.totalMessWarn;
 	}
-	public void setCantMensajesIconoPregunta() {
-		this.cantMensajesIconoPregunta++;
+	public void setTotalMessQuestion() {
+		this.totalMessQuestion++;
 	}
-	public int getCantMensajesIconoPregunta() {
-		return this.cantMensajesIconoPregunta;
+	public int getTotalMessQuestion() {
+		return this.totalMessQuestion;
 	} 
-	public String getEstado() {
-		return estado;
+	public String getState() {
+		return state;
 	}
 
-	public void setEstado(String estado) {
-		this.estado = estado;
+	public void setState(String state) {
+		this.state = state;
 	}
-	public Long tiempoDeEjecucion(){
-		return finalizacion - inicializacion;
+	public Long timeOfExecution(){
+		return end - init;
 	}
-	public String tiempoDeEjecucionSeg(){
-		Long tejecucion = finalizacion - inicializacion;
+	public String timeOfExecutionSeconds(){
+		Long timeExecution = end - init;
 		
-		Long horas = tejecucion / 3600000;
-		Long restoHoras = tejecucion%3600000;
+		Long hours = timeExecution / 3600000;
+		Long restHours = timeExecution%3600000;
 		
-		Long minutos = restoHoras / 60000;
-		Long restoMinutos = restoHoras%60000;
+		Long minutes = restHours / 60000;
+		Long restMinutes = restHours%60000;
 		
-		Long segundos = restoMinutos / 1000;
-		Long restoSegundos = restoMinutos%1000;
+		Long seconds = restMinutes / 1000;
+		Long restSeconds = restMinutes%1000;
 		
-		return horas + ":" + minutos + ":" + segundos + "." + restoSegundos;	
+		return hours + ":" + minutes + ":" + seconds + "." + restSeconds;	
 	}
 }

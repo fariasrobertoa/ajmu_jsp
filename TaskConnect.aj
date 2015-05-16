@@ -12,54 +12,55 @@ package ajmu;
 
 abstract aspect TaskConnect{
 
-	static boolean connectOcupado = false;
-	boolean iniciada	= false;	
-	Task miTarea = null;
+	static boolean connectBusy = false;
+	boolean initiated	= false;	
+	Task taskAnalyzed = null;
 	
 	/**
-	 * POINTCUT inicializacion()
+	 * POINTCUT startTask()
 	 * Define el conjunto de puntos de corte que marcan el inicio de la tarea cuya usabilidad se desea estudiar.
 	 */
-	abstract pointcut inicializacion();
+	abstract pointcut startTask();
 	/**
 	 * ADVICE before()
 	 * Si la tarea aún no ha iniciado, cambia el estado del atributo iniciada a true. 
 	 */
 	
-	abstract String setTareaDescripcion();
+	abstract String setIdTask();
 	
-	before(): inicializacion(){
-		if(!connectOcupado){
-			if (!iniciada) {
-				miTarea = new Task(setTareaDescripcion());
-				iniciada = true;
-				connectOcupado = true;
+	before(): startTask(){
+		if(!connectBusy){
+			if (!initiated) {
+				taskAnalyzed = new Task(setIdTask());
+				initiated = true;
+				connectBusy = true;
+				
 			}
 		}
 	}
 	
 	/**
-	 * POINTCUT finalizacion()
+	 * POINTCUT endTask()
 	 * Define el conjunto de puntos de corte que marcan el fin de la tarea cuya usabilidad se desea estudiar.
 	 */
-	abstract pointcut finalizacion();
+	abstract pointcut endTask();
 	/**
 	 * ADVICE after() returning.
 	 * Si la tarea se encuentra iniciada cuando alguno de los joinpoints es capturado, entonces cambia el estado
 	 * de la tarea a finalizada e inicializa los atributos del aspecto.  
 	 */	 
-	after() returning: finalizacion(){
-		if (iniciada) {
-			miTarea.finaliza();	
+	after() returning: endTask(){
+		if (initiated) {
+			taskAnalyzed.finalize();	
 		}
-		iniciada = false;
-		connectOcupado = false;
+		initiated = false;
+		connectBusy = false;
 			
 	}
-	pointcut noFinaliza():execution(void Task.noFinaliza(..));
-	after() returning: noFinaliza(){
-		iniciada = false;
-		connectOcupado = false;
+	pointcut noFinalize():execution(void Task.noFinalize(..));
+	after() returning: noFinalize(){
+		initiated = false;
+		connectBusy = false;
 	}
 	
 	

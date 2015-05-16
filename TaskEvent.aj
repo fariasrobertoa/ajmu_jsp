@@ -6,34 +6,34 @@ import org.aspectj.lang.Signature;
 
 abstract aspect TaskEvent {
 	
-	protected static Task miTarea = null;
-	protected int nroEvento = 0;
-	protected int nroDialogo	= 0;
+	protected static Task taskRef = null;
+	protected int totalEvents = 0;
+	protected int totalDialogs	= 0;
 	
-	pointcut flujoInicializacion(): cflow(inicializacion());
-	pointcut flujoFinalizacion(): cflow(finalizacion());
-	pointcut flujoAspecto(): cflow(adviceexecution());
+	pointcut initFlow(): cflow(init());
+	pointcut endFlow(): cflow(end());
+	pointcut aspectFlow(): cflow(adviceexecution());
 	
-	pointcut tareaEnEjecucion(): if ((miTarea!=null) && (!miTarea.isCompleta()));
+	pointcut isATask(): if ((taskRef!=null) && (!taskRef.isComplete()));
 	
-	pointcut inicializacion():initialization(Task.new(String));
-	pointcut finalizacion():execution(void Task.finaliza(..));
-	after(): finalizacion(){
-		nroEvento = 0;
-		nroDialogo = 0;
+	pointcut init():initialization(Task.new(String));
+	pointcut end():execution(void Task.finalize(..));
+	after(): end(){
+		totalEvents = 0;
+		totalDialogs = 0;
 		
 	}
 	
-	pointcut registrarInicio(Task tar):inicializacion()&&this(tar);
-	after(Task tar): registrarInicio(tar){
-		miTarea = tar;
+	pointcut saveRef(Task tar):init()&&this(tar);
+	after(Task tar): saveRef(tar){
+		taskRef = tar;
 	}
 		
 	/**
-	 * POINTCUT capturaDialogo()
+	 * POINTCUT completeDialog()
 	 * Captura ventanas de tipo Dialog gestionadas en el flujo de control LUEGO de la accion definida en pointcut inicializacion()
 	 */
-	pointcut capturaDialogo(Dialog jd): !flujoInicializacion()&&!flujoAspecto() && call( * *Dialog(..)) && target(jd) && tareaEnEjecucion();
+	pointcut completeDialog(Dialog jd): !initFlow()&&!aspectFlow() && call( * *Dialog(..)) && target(jd) && isATask();
 	/**
 	 * ADVICE before()
 	 * Registra información de la ventana de tipo Dialog cuando ésta es capturada por el pointcut.
@@ -41,22 +41,22 @@ abstract aspect TaskEvent {
 	 * También se contabiliza el atributo cantDialogos del objeto miTarea.
 	 * @param jd puede ser cualquier objeto de tipo Dialog o JDialog.
 	 */
-	before(Dialog jd): capturaDialogo(jd){
+	before(Dialog jd): completeDialog(jd){
 		if (thisJoinPoint.getTarget().getClass().getSuperclass().getCanonicalName().equals("javax.swing.JDialog") ||
 				thisJoinPoint.getTarget().getClass().getSuperclass().getCanonicalName().equals("java.awt.Dialog")){
 			
-			String tituloDialogo	= "Titulo: " + jd.getTitle();
+			String titleDialog	= "Titulo: " + jd.getTitle();
 			
 			Signature sig = thisJoinPointStaticPart.getSignature();
 			String kind = thisJoinPointStaticPart.getKind();
 			String line =""+ thisJoinPointStaticPart.getSourceLocation().getLine();
 	        String sourceName = thisJoinPointStaticPart.getSourceLocation().getWithinType().getCanonicalName();
 	         
-	        String reg = "Dialogo: "+  + ++nroDialogo + "-> TITULO: " + tituloDialogo + ": Ocurrio un llamado en "+ sourceName+ "("+ kind +") linea " + line + " al metodo " + sig + "(" + thisJoinPoint.toLongString() + ")";
+	        String reg = "Dialogo: "+  + ++totalDialogs + "-> TITULO: " + titleDialog + ": Ocurrio un llamado en "+ sourceName+ "("+ kind +") linea " + line + " al metodo " + sig + "(" + thisJoinPoint.toLongString() + ")";
 	        
-	        miTarea.setCantDialogos();
+	        taskRef.setTotalDialogs();
 			
-			TaskLogger.aspectOf().log().addDialog(miTarea.getCantDialogos(), reg);
+			TaskLogger.aspectOf().log().addDialog(taskRef.getTotalDialogs(), reg);
 		}		
 	}
 	
