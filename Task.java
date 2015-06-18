@@ -17,14 +17,14 @@ public class Task {
 	private boolean complete;
 	private long init,end;
 	private int totalExceptions;
-	//private String descripcion; totalMessQuestion
-	private int totalDialogs;
 	private int totalAccessDocumentation;
+	/*private int totalDialogs;
 	private int totalMessWithoutIcon;
 	private int totalMessError;
 	private int totalMessInfo;
 	private int totalMessWarn;
 	private int totalMessQuestion;
+	*/
 	private int sat1, sat2, sat3;
 	private String state;
 	private int ageUser;
@@ -46,16 +46,12 @@ public class Task {
 		this.sexUser = sexUser;
 	}
 	
-    
-
-	public Task(String idTask) {		
-		//id	= desc.replaceAll(" ", "_") + "_"+ System.currentTimeMillis();
+   	public Task(String idTask) {		
 		id = idTask;
 		complete = false;
 		init = System.currentTimeMillis();
 		end = 0;
 		totalExceptions = 0;
-		//descripcion = desc;
 		totalAccessDocumentation = 0;
 		state = "initiated";
 	}
@@ -79,12 +75,6 @@ public class Task {
 		return sat3;
 	}
 		
-	/*public void setDescripcion(String descripcion) {
-		this.descripcion = descripcion;
-	}
-	public String getDescripcion() {
-		return descripcion;
-	}*/	
 	public String getId() {
 		return id;
 	}
@@ -112,17 +102,18 @@ public class Task {
 	public int getTotalExceptions() {
 		return totalExceptions;
 	}
-	public void setTotalDialogs() {
-		this.totalDialogs++;
-	}
-	public int getTotalDialogs() {
-		return totalDialogs;
-	}
 	public void setTotalAccessDocumentation(){
 		this.totalAccessDocumentation++;
 	}
 	public int getTotalAccessDocumentation(){
 		return this.totalAccessDocumentation;
+	}
+	/*
+	public void setTotalDialogs() {
+		this.totalDialogs++;
+	}
+	public int getTotalDialogs() {
+		return totalDialogs;
 	}
 	public void setTotalMessWithoutIcon() {
 		this.totalMessWithoutIcon++;
@@ -153,7 +144,7 @@ public class Task {
 	}
 	public int getTotalMessQuestion() {
 		return this.totalMessQuestion;
-	} 
+	} */
 	public String getState() {
 		return state;
 	}

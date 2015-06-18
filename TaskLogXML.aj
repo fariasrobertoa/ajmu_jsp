@@ -14,13 +14,21 @@ public aspect TaskLogXML extends TaskLog{
 	@Override
 	void endTask(Task t) {
 		// TODO Auto-generated method stub
-		logJaxb.addLogFinal(t.getState(), t.getTotalAccessDocumentation(), t.getTotalDialogs(), t.getTotalExceptions(), t.getTotalMessError(), t.getTotalMessInfo(), t.getTotalMessQuestion(), t.getTotalMessWarn(), t.getTotalMessWithoutIcon(),t.timeOfExecution(),t.getSat1(),t.getSat2(),t.getSat3());
+		//logJaxb.addLogFinal(t.getState(), t.getTotalAccessDocumentation(), t.getTotalDialogs(), t.getTotalExceptions(), t.getTotalMessError(), t.getTotalMessInfo(), t.getTotalMessQuestion(), t.getTotalMessWarn(), t.getTotalMessWithoutIcon(),t.timeOfExecution(),t.getSat1(),t.getSat2(),t.getSat3());
+		logJaxb.addLogFinal(t.getState(), t.getTotalAccessDocumentation(), 0, t.getTotalExceptions(), 0, 0, 0, 0, 0,t.timeOfExecution(),t.getSat1(),t.getSat2(),t.getSat3());
 	}
 	
 	@Override
+	void noEndTask(Task t) {
+		// TODO Auto-generated method stub
+		//logJaxb.addLogPartial(t.getState(),t.getTotalAccessDocumentation(), t.getTotalDialogs(), t.getTotalExceptions(), t.getTotalMessError(), t.getTotalMessInfo(), t.getTotalMessQuestion(), t.getTotalMessWarn(), t.getTotalMessWithoutIcon());
+		logJaxb.addLogPartial(t.getState(),t.getTotalAccessDocumentation(), 0, t.getTotalExceptions(), 0, 0, 0, 0, 0);
+	}
+	@Override
 	void events(Task t) {
 		// TODO Auto-generated method stub
-		logJaxb.addLogPartial(t.getState(),t.getTotalAccessDocumentation(), t.getTotalDialogs(), t.getTotalExceptions(), t.getTotalMessError(), t.getTotalMessInfo(), t.getTotalMessQuestion(), t.getTotalMessWarn(), t.getTotalMessWithoutIcon());
+		//logJaxb.addLogPartial(t.getState(),t.getTotalAccessDocumentation(), t.getTotalDialogs(), t.getTotalExceptions(), t.getTotalMessError(), t.getTotalMessInfo(), t.getTotalMessQuestion(), t.getTotalMessWarn(), t.getTotalMessWithoutIcon());
+		logJaxb.addLogPartial(t.getState(),t.getTotalAccessDocumentation(), 0, t.getTotalExceptions(), 0, 0, 0, 0, 0);
 	}
 	
 	@Override

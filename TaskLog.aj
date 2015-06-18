@@ -18,6 +18,8 @@ abstract aspect TaskLog {
 	
 	abstract void endTask(Task t);
 	
+	abstract void noEndTask(Task t);
+	
 	abstract InterfaceTaskLog log();
 	
 	pointcut logStart(Task t):initialization(Task.new(String))&&this(t);
@@ -42,7 +44,7 @@ abstract aspect TaskLog {
 	}
 	
 	after(Task t): logNoEnd(t){
-		log().addLogPartial(t.getState(),t.getTotalAccessDocumentation(), t.getTotalDialogs(), t.getTotalExceptions(), t.getTotalMessError(), t.getTotalMessInfo(), t.getTotalMessQuestion(), t.getTotalMessWarn(), t.getTotalMessWithoutIcon());		
+		noEndTask(t);		
 	}
 		
 	
