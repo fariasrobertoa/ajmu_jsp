@@ -10,11 +10,14 @@
 */
 package ajmu;
 
+import java.util.Hashtable;
+
 abstract aspect TaskConnect{
 
-	static boolean connectBusy = false;
-	boolean initiated	= false;	
-	Task taskAnalyzed = null;
+	//static boolean connectBusy = false;
+	//boolean initiated	= false;	
+	static Task taskAnalyzed = null;
+	static Hashtable<Integer, String> startedTasks = new Hashtable<Integer, String>();
 	
 	/**
 	 * POINTCUT startTask()
@@ -29,6 +32,16 @@ abstract aspect TaskConnect{
 	abstract String setIdTask();
 	
 	before(): startTask(){
+		
+		if(taskAnalyzed == null){
+			taskAnalyzed = new Task(setIdTask());
+			
+		}else{
+			taskAnalyzed.noFinalize();
+			taskAnalyzed = new Task(setIdTask());
+		}
+		startedTasks.put(taskAnalyzed.hashCode(), taskAnalyzed.getId());
+		/*
 		if(!connectBusy){
 			if (!initiated) {
 				taskAnalyzed = new Task(setIdTask());
@@ -36,7 +49,7 @@ abstract aspect TaskConnect{
 				connectBusy = true;
 				
 			}
-		}
+		}*/
 	}
 	
 	/**
@@ -50,18 +63,24 @@ abstract aspect TaskConnect{
 	 * de la tarea a finalizada e inicializa los atributos del aspecto.  
 	 */	 
 	after() returning: endTask(){
+		if(taskAnalyzed != null){
+			taskAnalyzed.finalize();
+			startedTasks.remove(taskAnalyzed.hashCode());
+			taskAnalyzed = null;
+		}
+		/*
 		if (initiated) {
 			taskAnalyzed.finalize();	
 		}
 		initiated = false;
-		connectBusy = false;
+		connectBusy = false;*/
 			
 	}
-	pointcut noFinalize():execution(void Task.noFinalize(..));
+	/*pointcut noFinalize():execution(void Task.noFinalize(..));
 	after() returning: noFinalize(){
 		initiated = false;
 		connectBusy = false;
-	}
+	}*/
 	
 	
 	

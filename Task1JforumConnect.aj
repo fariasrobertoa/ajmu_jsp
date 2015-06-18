@@ -1,26 +1,21 @@
 package ajmu;
 
 /**
- * Tarea1FreemindConnect. Declara los pointcut de inicio y fin de la tarea que se define a continuación.
+ * Task1JforumConnect. 
  * 
- * Tarea1: Creación de un Mapa Mental Básico.
+ * Tarea 1: Creación de un tema en el foro.
  * 
- * Descripción: En esta tarea, el usuario deberá crear un nuevo mapa desde el menú principal o desde la barra de herramientas.
- * Luego, mediante las diferentes opciones que ofrece la aplicación, deberá agregar, al menos, 10 nodos, organizados en una jerarquía 
- * de al menos tres niveles. 
- * Se podrán solicitar a los usuario que apliquen formato, tal como cambiar el color del nodo principal, su morfología, el tamaño de 
- * la fuente, etc.
- * Finalmente se pedirá que guarde el mapa conceptual en el escritorio de su ordenador con un nombre significativo.
+ * Descripción: En esta tarea, el usuario deberá ingresar al sistema de foros JForum y crear un nuevo tema en el foro Evaluación de Usabilidad. 
+ * Deberá asignar un título significativo al tema y una breve descripción sobre el tema centra de discusión que se desea desarrollar.
+ * En la descripción, se pide al menos, insertar una imagén, y dar formato al texto, aplicando alineación y colores a las frases o palabras destacadas.
+ *
+ * Inicio de la tarea: La tarea se considerará iniciada luego de que el usuario haya seleccionado la opción "New Post".
  * 
- * Inicio de la tarea: La tarea se considerará iniciada luego de que el usuario haya seleccionado la opción "Nuevo" del 
- * menú principal o desde la barra de herramientas.
- * 
- * Fin de la tarea: La tarea se considerará finalizada luego de que el usuario guarde, por primera vez, el mapa en el escritorio. 
+ * Fin de la tarea: La tarea se considerará finalizada luego de que el usuario envíe el formulario y aparezca la publicación en el listado de temas del foro Evaluación de Usabilidad. 
  * 
  * @author PI-315
  *
  */
-
 public aspect Task1JforumConnect extends TaskConnect{
 	
 	pointcut startTask():execution(void net.jforum.view.forum.PostAction.insert());
@@ -28,6 +23,6 @@ public aspect Task1JforumConnect extends TaskConnect{
 	pointcut endTask():execution(int net.jforum.dao.PostDAO+.addNew(net.jforum.entities.Post));
 	
 	String setIdTask() {
-		return "Tarea 1: Creación de un tema en el foro";
+		return "01";
 	}
 }

@@ -16,7 +16,7 @@ public aspect traza {
     //pointcut traza(String url):execution (String net.jforum.context.JForumContext.encodeURL(String))&&args(url)&&!flujoAspecto();
 	
 	
-	pointcut traza():execution (* net.jforum.view.admin.*.*(..))&&!flujoAspecto()&&!flujoMonitor();
+	pointcut traza():execution (* net.jforum.view.*.*.*(..))&&!flujoAspecto()&&!flujoMonitor();
 	
 	before():traza(){
 		Signature sig = thisJoinPointStaticPart.getSignature();

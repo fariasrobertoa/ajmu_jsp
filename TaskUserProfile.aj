@@ -17,7 +17,7 @@ import java.awt.event.*;
 import java.util.List;
 import java.util.ArrayList;
 
-public aspect TaskUserProfile implements ActionListener{
+abstract aspect TaskUserProfile implements ActionListener{
 	
 	
 	static int ageUser = 0;
@@ -26,6 +26,8 @@ public aspect TaskUserProfile implements ActionListener{
     static String maleString = "Male";
     static String otherString = "Other"; 
 	
+    abstract InterfaceTaskLog logProfile();
+    
 	pointcut initUserSession():execution(void net.jforum.view.forum.UserAction.buildSucessfulLoginRedirect());
 	
 	//void around(): initUserSession(){
@@ -67,7 +69,7 @@ public aspect TaskUserProfile implements ActionListener{
 	         //proceed();
 	         
 	      //}
-	      TaskLogger.aspectOf().log().addSession(TaskUserProfile.ageUser, TaskUserProfile.sexUser);
+	      logProfile().addSession(TaskUserProfile.ageUser, TaskUserProfile.sexUser);
 	      //System.exit(0);
 	      
 	}

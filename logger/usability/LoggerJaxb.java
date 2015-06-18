@@ -12,7 +12,9 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
-public class LoggerJaxb {
+import ajmu.InterfaceTaskLog;
+
+public class LoggerJaxb implements InterfaceTaskLog{
 	private UsabilityRecordType regusa;
 	private SessionType sesionActual;
 	private TaskType tareaActual;
